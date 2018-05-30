@@ -4,6 +4,7 @@
 
 # data set
 /UCI_data/
+/algo_reference/
 
 # Prerequisites
 *.d

@@ -3,4 +3,4 @@ project(UCI_CPP_MLAlgo)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(UCI_CPP_MLAlgo UCI_app/main.cpp lib/Matrix.h lib/clustering.h)
+add_executable(UCI_CPP_MLAlgo UCI_app/KMeans_test.cpp lib/Matrix.h lib/clustering.h)
