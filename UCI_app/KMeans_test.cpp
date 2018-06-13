@@ -9,7 +9,7 @@ int main() {
     cout << "Input file name: (default \"KMeansInput.txt\")";
     cin >> inFileName;
     cout << "Output file name: (default \"KMeansOutput.txt\")";
-    cout << outFileName;
+    cin >> outFileName;
     ifstream ifs(inFileName);
     ofstream ofs(outFileName);
     if (!ifs) {

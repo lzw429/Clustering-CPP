@@ -9,13 +9,15 @@
 #include <string>
 #include <cmath>
 #include <stdexcept>
+#include <ctime>
+#include <iostream>
 #include "Matrix.h"
 
 using namespace std;
 
 template<class T>
 struct Tuple<T> {
-    int type;
+    int type; // 类别标号
     vector<T> v;
 
     Tuple(unsigned int size) {
@@ -34,6 +36,18 @@ struct Tuple<T> {
         return v[index];
     };
 };
+
+double getDist(const Tuple<double> &v1, const Tuple<double> &v2, const string &dist_type) const;
+
+int getClusterNum(vector<Tuple<double>> means, Tuple<double> tuple, string dist_type);
+
+Tuple<double> getMeans(const vector<Tuple<double>> &cluster);
+
+double getClusterError(const vector<vector<Tuple<double>>> &cluster, vector<Tuple<double>> means, string dist_type);
+
+vector<Tuple<double>> random_means(vector<Tuple<double>> &tuples, unsigned int k);
+
+void KMeans(vector<Tuple<double>> &tuples, unsigned int k = 2);
 
 // 计算两元组间距离
 double getDist(const Tuple<double> &v1, const Tuple<double> &v2, const string &dist_type) const {
@@ -79,7 +93,7 @@ Tuple<double> getMeans(const vector<Tuple<double>> &cluster) {
     Tuple<double> res((unsigned int) n);
     for (int i = 0; i < m; i++)
         for (int j = 0; j < n; j++)
-            res[j] += cluster.mat[i][j];
+            res[j] += cluster[i][j];
     for (int j = 0; j < n; j++)
         res[j] /= m;
     return res;
@@ -96,12 +110,76 @@ double getClusterError(const vector<vector<Tuple<double>>> &cluster, vector<Tupl
     return res;
 }
 
-void KMeans(vector<Tuple<double>> &tuples, int k = 2) {
+void KMeans(vector<Tuple<double>> &tuples, unsigned int k = 2, ofstream &ofs) {
     vector<vector<Tuple<double>>> clusters; // k个簇
     vector<Tuple<double>> means; // k个聚类中心
-    for (int i = 0; i < k; i++) {
+    string dist_type; // 距离类型
+    int choice = 0; // 用户输入的选择
+    // 选取距离类型
+    cout << "" << endl;
+    cout << "1. Manhattan distance" << endl;
+    cout << "2. Euclidean distance" << endl;
+    cout << "3. Chebyshev distance" << endl;
+    cin >> choice;
+    switch (choice) {
+        case 1:
+            dist_type = "Manhattan";
+            break;
+        case 2:
+            dist_type = "Euclidean";
+            break;
+        case 3:
+            dist_type = "Chebyshev";
+            break;
+        default:
+            break;
+    }
+    // 生成初始质心
+    cout << "Initial centroid input:" << endl;
+    cout << "1. Randomly generate." << endl;
+    cin >> choice;
+    switch (choice) {
+        case 1:
+            means = random_means(means, k);
+            break;
+        default:
+            break;
+    }
+    // 根据初始质心给簇赋值
+    int label = 0;
+    for (int i = 0; i != tuples.size(); i++) {
+        label = getClusterNum(means, tuples[i], dist_type);
+        clusters[label].push_back(tuples[i]);
+    }
+    double oldError = -1;
+    double newError = getClusterError(clusters, means, dist_type);
+    ofs << "The initial sum of the overall error:"  << newError << endl;
+    int count = 0; // 迭代计数
+    while (abs(newError - oldError) >= 1) {
 
     }
+}
+
+vector<Tuple<double>> random_means(vector<Tuple<double>> &tuples, unsigned int k) { // 随机生成聚类中心
+    assert(!tuples.size());
+    const int dimen = tuples[0].size(); // 维数
+    vector<Tuple<double>> means(k, Tuple(dimen)); // 返回k个随机聚类中心
+    Tuple<double> min_bound(dimen);
+    Tuple<double> max_bound(dimen);
+    for (int i = 0; i < tuples.size(); i++) {
+        for (int j = 0; j < dimen; j++) {
+            min_bound[j] = min(min_bound[j], tuples[i][j]);
+            max_bound[j] = max(max_bound[j], tuples[i][j]);
+        }
+    }
+    srand(static_cast<unsigned int>(time(0)));
+    for (Tuple<double> tuple: means) {
+        for (int i = 0; i < tuple.size(); i++) {
+            double t = rand() % 100 / (double) 101;
+            tuple[i] = t * (max_bound[i] - min_bound[i]) + min_bound[i]; // 生成随机数
+        }
+    }
+    return means;
 }
 
 #endif //UCI_CPP_MLALGO_CLUSTERING_H
