@@ -7,7 +7,7 @@
 // str 被分割字符串
 // delimiters 分隔符
 // elems 分割后的字符串集合
-vector <string> &split(const string &str, const string &delimiters, vector <string> &elems, bool skip_empty = true) {
+vector<string> &split(const string &str, const string &delimiters, vector<string> &elems, bool skip_empty = true) {
     string::size_type pos, prev = 0;
     while ((pos = str.find_first_of(delimiters, prev)) != string::npos) {
         if (pos > prev) {
@@ -18,6 +18,10 @@ vector <string> &split(const string &str, const string &delimiters, vector <stri
     }
     if (prev < str.size()) elems.emplace_back(str, prev, str.size() - prev);
     return elems;
+}
+
+vector<Tuple<double>> normaliazation(vector<Tuple<double>> data) {
+
 }
 
 #define UCI_CPP_MLALGO_UTIL_H

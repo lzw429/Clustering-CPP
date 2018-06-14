@@ -45,11 +45,12 @@ int main() {
     cin >> k;
 
     string line;
-    vector<string> nums;
     auto cnt = 0;
     while (ifs >> line) {
+        vector<string> nums;
         split(line, ",", nums, true);
-        Tuple<double> tuple(nums.size());
+        line.clear();
+        Tuple<double> tuple(nums.size() - 1);
         cnt++;
         if (cnt <= 59) {
             tuple.type = 1;
@@ -62,7 +63,19 @@ int main() {
             tuple[i] = stof(nums[i]);
         tuples.push_back(tuple);
     }
-    KMeans(tuples, ofs, dist_type, k); // 执行 KMeans 算法
+    vector<Tuple<double>> means; // k个聚类中心
+    // 生成初始质心
+    cout << "Initial centroid input:" << endl;
+    cout << "1. Randomly generate." << endl;
+    cin >> choice;
+    switch (choice) {
+        case 1:
+            means = random_means(tuples, k);
+            break;
+        default:
+            break;
+    }
+    KMeans(tuples, means, ofs, dist_type, k); // 执行 KMeans 算法
     ifs.close();
     ofs.close();
     return 0;

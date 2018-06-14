@@ -54,7 +54,7 @@ vector<Tuple<double>> random_means(vector<Tuple<double>> &tuples, unsigned int k
 
 void print(vector<Tuple<double>> clusters[], ofstream &ofs, int k);
 
-void KMeans(vector<Tuple<double>> &tuples, ofstream &ofs, int k);
+void KMeans(vector<Tuple<double>> &tuples, vector<Tuple<double>> means, ofstream &ofs, int k);
 
 // 计算两元组间距离
 inline double getDist(Tuple<double> &v1, Tuple<double> &v2, const string &dist_type) {
@@ -137,21 +137,10 @@ inline void print(vector<vector<Tuple<double>>> &clusters, ofstream &ofs, const 
     }
 }
 
-inline void KMeans(vector<Tuple<double>> &tuples, ofstream &ofs, const string &dist_type, int k = 2) {
+inline void
+KMeans(vector<Tuple<double>> &tuples, vector<Tuple<double>> means, ofstream &ofs, const string &dist_type, int k = 2) {
     vector<vector<Tuple<double>>> clusters; // k个簇
-    vector<Tuple<double>> means; // k个聚类中心
     auto choice = 0; // 用户输入的选择
-    // 生成初始质心
-    cout << "Initial centroid input:" << endl;
-    cout << "1. Randomly generate." << endl;
-    cin >> choice;
-    switch (choice) {
-        case 1:
-            means = random_means(means, k);
-            break;
-        default:
-            break;
-    }
     // 根据初始质心给簇赋值
     int label;
     for (auto &tuple : tuples) {
