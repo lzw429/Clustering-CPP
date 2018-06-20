@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include "../lib/clustering.h"
 #include "../lib/Util.h"
 
@@ -48,10 +49,10 @@ int main() {
     auto cnt = 0;
     while (ifs >> line) {
         vector<string> nums;
-        split(line, ",", nums, true);
+        split(line, ",", nums);
         line.clear();
         Tuple<double> tuple(nums.size() - 1);
-        cnt++;
+        cnt++; // 元组计数
         if (cnt <= 59) {
             tuple.type = 1;
         } else if (cnt <= 130) {
@@ -59,10 +60,14 @@ int main() {
         } else {
             tuple.type = 3;
         }
-        for (unsigned int i = 0; i < nums.size() - 1; i++)
-            tuple[i] = stof(nums[i]);
+        for (unsigned int i = 0; i < nums.size() - 1; i++) { // string 类型转化为 double 类型
+            stringstream ss;
+            ss << nums[i];
+            ss >> tuple[i];
+        }
         tuples.push_back(tuple);
     }
+    tuples = normaliazation(tuples);  // 归一化
     vector<Tuple<double>> means; // k个聚类中心
     // 生成初始质心
     cout << "Initial centroid input:" << endl;
@@ -78,5 +83,6 @@ int main() {
     KMeans(tuples, means, ofs, dist_type, k); // 执行 KMeans 算法
     ifs.close();
     ofs.close();
+    cout << "KMeans completed." << endl;
     return 0;
 }

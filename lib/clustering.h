@@ -4,6 +4,7 @@
 
 #ifndef UCI_CPP_MLALGO_CLUSTERING_H
 #define UCI_CPP_MLALGO_CLUSTERING_H
+#define Epsilon 0.1
 
 #include <vector>
 #include <string>
@@ -124,12 +125,12 @@ inline double getClusterError(vector<vector<Tuple<double>>> &cluster, vector<Tup
 }
 
 inline void print(vector<vector<Tuple<double>>> &clusters, ofstream &ofs, const int k) {
-    const int dimen = clusters[0].size();
+    const int dimen = clusters[0][0].size();
     for (int label = 0; label < k; label++) {
         ofs << "No." << label + 1 << " cluster:" << endl;
         for (unsigned int i = 0; i < clusters[label].size(); i++) {
-            ofs << i + 1 << ".(";
-            for (auto j = 0; j <= dimen; ++j) {
+            ofs << i + 1 << ". [" << clusters[label][i].type << "] (";
+            for (auto j = 0; j < dimen; ++j) {
                 ofs << clusters[label][i][j] << ", ";
             }
             ofs << ")" << endl;
@@ -139,7 +140,7 @@ inline void print(vector<vector<Tuple<double>>> &clusters, ofstream &ofs, const 
 
 inline void
 KMeans(vector<Tuple<double>> &tuples, vector<Tuple<double>> means, ofstream &ofs, const string &dist_type, int k = 2) {
-    vector<vector<Tuple<double>>> clusters; // k个簇
+    vector<vector<Tuple<double>>> clusters(k); // k个簇
     auto choice = 0; // 用户输入的选择
     // 根据初始质心给簇赋值
     int label;
@@ -151,17 +152,15 @@ KMeans(vector<Tuple<double>> &tuples, vector<Tuple<double>> means, ofstream &ofs
     double newError = getClusterError(clusters, means, const_cast<string &>(dist_type));
     ofs << "The initial sum of the overall error:" << newError << endl;
     int count = 0; // 迭代计数
-    while (abs(newError - oldError) >= 1) // 迭代，直到邻近两次函数值相差不到1，即准则函数值不发生明显变化时，算法终止
+    while (abs(newError - oldError) >= Epsilon) // 迭代，直到邻近两次函数值相差不到1，即准则函数值不发生明显变化时，算法终止
     {
         ofs << "No." << ++count << " iteration begins." << endl;
-        for (int i = 0; i < k; i++) // 更新每个簇的中心点
-        {
+        for (int i = 0; i < k; i++) { // 更新每个簇的中心点
             means[i] = getMeans(clusters[i]);
         }
         oldError = newError;
         newError = getClusterError(clusters, means, const_cast<string &>(dist_type)); // 计算新的准则函数值
-        for (auto i = 0; i < k; i++) // 清空每个簇
-        {
+        for (auto i = 0; i < k; i++) { // 清空每个簇
             clusters[i].clear();
         }
         // 根据新的质心获得新的簇
@@ -182,10 +181,8 @@ inline vector<Tuple<double>> random_means(vector<Tuple<double>> &tuples, unsigne
     assert(tuples.size() != 0);
     const int dimen = tuples[0].size(); // 维数
     vector<Tuple<double>> means(k, Tuple<double>(dimen)); // 返回k个随机聚类中心
-    // ReSharper disable CppLocalVariableMayBeConst
     Tuple<double> min_bound(dimen);
     Tuple<double> max_bound(dimen);
-    // ReSharper restore CppLocalVariableMayBeConst
     for (auto &tuple : tuples) {
         for (int j = 0; j < dimen; j++) {
             min_bound[j] = min(min_bound[j], tuple[j]);
@@ -194,9 +191,9 @@ inline vector<Tuple<double>> random_means(vector<Tuple<double>> &tuples, unsigne
     }
     srand(static_cast<unsigned int>(time(nullptr)));
     for (auto &mean : means) {
-        for (unsigned int j = 0; j < tuples.size(); j++) {
+        for (unsigned int j = 0; j < dimen; j++) {
             double t = rand() % 100 / double(101);
-            mean = t * (max_bound[j] - min_bound[j]) + min_bound[j]; // 生成随机数
+            mean[j] = t * (max_bound[j] - min_bound[j]) + min_bound[j]; // 生成随机数
         }
     }
     return means;
