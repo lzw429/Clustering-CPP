@@ -4,6 +4,26 @@
 
 #ifndef UCI_CPP_MLALGO_UTIL_H
 
+void setFileStream(ifstream ifs, ofstream ofs, string inFileName, string outFileName);
+
+void split(std::string &s, std::string delim, std::vector<std::string> &ret);
+
+vector<Tuple<double>> normaliazation(vector<Tuple<double>> &data);
+
+ifstream openIfs(string &inFileName) {
+    ifstream ifs(inFileName);
+    ofs.open(outFileName, ofstream::out);
+    if (!ifs) {
+        cout << "[Error] cannot open the file " << inFileName << " ." << endl;
+        return -1;
+    }
+}
+
+void closeFileStream(ifstream ifs, ofstream ofs) {
+    ifs.close();
+    ofs.close();
+}
+
 // s 被分割字符串
 // delimiters 分隔符
 // ret 分割后的字符串集合
@@ -21,7 +41,6 @@ void split(std::string &s, std::string delim, std::vector<std::string> &ret) {
 }
 
 vector<Tuple<double>> normaliazation(vector<Tuple<double>> &data) { // 数据归一化
-    // TODO 实现归一化
     assert(data.size() != 0);
     const int dimen = data[0].size(); // 维数
     const int size = data.size();

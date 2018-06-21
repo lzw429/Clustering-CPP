@@ -14,12 +14,9 @@ int main() {
     cin >> inFileName;
     cout << "Output file name:" << endl;
     cin >> outFileName;
-    ifstream ifs(inFileName);
-    ofstream ofs(outFileName);
-    if (!ifs) {
-        cout << "[Error] cannot open the file " << inFileName << " ." << endl;
-        return 0;
-    }
+
+    ifstream ifs = openIfs(inFileName);
+    ofstream ofs;
 
     int choice = 0;
     string dist_type;
