@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include "../lib/clustering.h"
+#include "../lib/KMeans.h"
 #include "../lib/Util.h"
 
 using namespace std;
@@ -16,7 +16,7 @@ int main() {
     cin >> outFileName;
 
     ifstream ifs = openIfs(inFileName);
-    ofstream ofs;
+    ofstream ofs(outFileName);
 
     int choice = 0;
     string dist_type;
@@ -58,13 +58,11 @@ int main() {
             tuple.type = 3;
         }
         for (unsigned int i = 0; i < nums.size() - 1; i++) { // string 类型转化为 double 类型
-            stringstream ss;
-            ss << nums[i];
-            ss >> tuple[i];
+            tuple[i] = stringToDouble(nums[i]);
         }
         tuples.push_back(tuple);
     }
-    tuples = normaliazation(tuples);  // 归一化
+    tuples = normalization(tuples);  // 归一化
     vector<Tuple<double>> means; // k个聚类中心
     // 生成初始质心
     cout << "Initial centroid input:" << endl;
@@ -78,8 +76,7 @@ int main() {
             break;
     }
     KMeans(tuples, means, ofs, dist_type, k); // 执行 KMeans 算法
-    ifs.close();
-    ofs.close();
+    closeFileStream(ifs, ofs);
     cout << "KMeans completed." << endl;
     return 0;
 }

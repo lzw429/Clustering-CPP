@@ -1,49 +1,24 @@
 //
 // Created by 舒意恒 on 2018/5/29.
 //
+#ifndef UCI_CPP_MLALGO_KMEANS_H
+#define UCI_CPP_MLALGO_KMEANS_H
 
-#ifndef UCI_CPP_MLALGO_CLUSTERING_H
-#define UCI_CPP_MLALGO_CLUSTERING_H
 #define Epsilon 0.1
 
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include <cassert>
 #include <ctime>
 #include <iostream>
 #include <fstream>
-#include "Matrix.h"
 #include <algorithm>
 #include <cmath>
+#include "Tuple.h"
+#include "Clustering.h"
 
 using namespace std;
-
-template<class T>
-class Tuple {
-public:
-    int type; // 类别标号
-    vector<T> v;
-
-    Tuple() : type(0) {
-    }
-
-    Tuple(unsigned int size) : type(0) {
-        v.resize(size, 0);
-    }
-
-    int size() const {
-        return v.size();
-    }
-
-    T &operator[](int index) {
-        if (index >= v.size()) {
-            throw out_of_range("Index exceeds vector length.");
-        }
-        return v[index];
-    }
-};
-
-double getDist(Tuple<double> &v1, Tuple<double> &v2, const string &dist_type);
 
 int getClusterNum(vector<Tuple<double>> &means, Tuple<double> &tuple, const string &dist_type);
 
@@ -56,33 +31,6 @@ vector<Tuple<double>> random_means(vector<Tuple<double>> &tuples, unsigned int k
 void print(vector<Tuple<double>> clusters[], ofstream &ofs, int k);
 
 void KMeans(vector<Tuple<double>> &tuples, vector<Tuple<double>> means, ofstream &ofs, int k);
-
-// 计算两元组间距离
-inline double getDist(Tuple<double> &v1, Tuple<double> &v2, const string &dist_type) {
-    double res = 0;
-    if (v1.size() != v2.size())
-        throw length_error("The length of the two tuples should be the same.");
-    if (dist_type == "Manhattan") {
-        // 曼哈顿距离
-        for (int i = 0; i < v1.size(); i++)
-            res += abs(v1[i] - v2[i]);
-    } else if (dist_type == "Euclidean") {
-        // 欧几里得距离
-        for (int i = 0; i < v1.size(); i++)
-            res += (v1[i] - v2[i]) * (v1[i] - v2[i]);
-        res = sqrt(res);
-    } else if (dist_type == "Chebyshev") {
-        // 切比雪夫距离
-        if (v1.size() < 3) // 向量维度至少为3
-            throw length_error("Calculating Chebyshev distance needs tuple dimension greater than or equal to 3.");
-        for (int i = 0; i < v1.size(); i++) {
-            const auto t = abs(v1[i] - v2[i]);
-            if (t > res)
-                res = t;
-        }
-    }
-    return res;
-}
 
 // 根据质心，判断当前元组属于哪个簇
 inline int getClusterNum(vector<Tuple<double>> &means, Tuple<double> &tuple, const string &dist_type) {
@@ -131,7 +79,7 @@ inline void print(vector<vector<Tuple<double>>> &clusters, ofstream &ofs, const 
         for (unsigned int i = 0; i < clusters[label].size(); i++) {
             ofs << i + 1 << ". [" << clusters[label][i].type << "] (";
             for (auto j = 0; j < dimen; ++j) {
-                ofs << clusters[label][i][j] << ", ";
+                ofs << clusters[label][i][j] << ((j != dimen - 1) ? ", " : "");
             }
             ofs << ")" << endl;
         }
@@ -199,4 +147,4 @@ inline vector<Tuple<double>> random_means(vector<Tuple<double>> &tuples, unsigne
     return means;
 }
 
-#endif //UCI_CPP_MLALGO_CLUSTERING_H
+#endif //UCI_CPP_MLALGO_KMEANS_H

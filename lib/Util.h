@@ -8,18 +8,19 @@ void setFileStream(ifstream ifs, ofstream ofs, string inFileName, string outFile
 
 void split(std::string &s, std::string delim, std::vector<std::string> &ret);
 
-vector<Tuple<double>> normaliazation(vector<Tuple<double>> &data);
+vector<Tuple<double>> normalization(vector<Tuple<double>> &data);
+
+double stringToDouble(string &str);
 
 ifstream openIfs(string &inFileName) {
     ifstream ifs(inFileName);
-    ofs.open(outFileName, ofstream::out);
     if (!ifs) {
-        cout << "[Error] cannot open the file " << inFileName << " ." << endl;
-        return -1;
+        throw ios_base::failure("[Error] cannot open the file " + inFileName + " .");
     }
+    return ifs;
 }
 
-void closeFileStream(ifstream ifs, ofstream ofs) {
+void closeFileStream(ifstream &ifs, ofstream &ofs) {
     ifs.close();
     ofs.close();
 }
@@ -40,7 +41,8 @@ void split(std::string &s, std::string delim, std::vector<std::string> &ret) {
     }
 }
 
-vector<Tuple<double>> normaliazation(vector<Tuple<double>> &data) { // 数据归一化
+
+vector<Tuple<double>> normalization(vector<Tuple<double>> &data) { // 数据归一化
     assert(data.size() != 0);
     const int dimen = data[0].size(); // 维数
     const int size = data.size();
@@ -61,6 +63,14 @@ vector<Tuple<double>> normaliazation(vector<Tuple<double>> &data) { // 数据归
         }
     }
     return norm;
+}
+
+double stringToDouble(string &str) {
+    double ret;
+    stringstream ss;
+    ss << str;
+    ss >> ret;
+    return ret;
 }
 
 #define UCI_CPP_MLALGO_UTIL_H
