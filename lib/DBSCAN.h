@@ -4,11 +4,12 @@
 #ifndef UCI_CPP_MLALGO_DBSCAN_H
 #define UCI_CPP_MLALGO_DBSCAN_H
 
+#include <stack>
+#include <queue>
 #include "Tuple.h"
 #include "Clustering.h"
 
 using namespace std;
-
 
 template<class T>
 class Point : public Tuple<T> {
@@ -24,10 +25,12 @@ public:
     int cluster;
 
     Point(int size) {
-        v.resize(size);
+        this->v.resize(size);
     }
 
-    Point(vector<double> v, int cluster) : v(v), cluster(cluster) {
+    Point(vector<double> v, int cluster) {
+        this->v = v;
+        this->cluster = cluster;
     }
 
     bool operator<(const Point &p) const {
@@ -37,6 +40,18 @@ public:
     }
 };
 
+struct smallTopHeap {
+    bool operator()(const Point<double> &a, const Point<double> &b) const {
+        return !(a < b); // 小顶堆
+    }
+};
+
+// 函数声明
+void DBSCAN(vector<Point<double>> &data, ofstream &ofs, double Epsilon, int minPts, string &dist_type);
+
+void print(vector<Point<double>> &, vector<Point<double>> &, ofstream &);
+
+// 函数实现
 inline void DBSCAN(vector<Point<double>> &data, ofstream &ofs, double Epsilon, int minPts, string &dist_type) {
     const int size = data.size();
     vector<Point<double>> corePoint;
@@ -51,21 +66,21 @@ inline void DBSCAN(vector<Point<double>> &data, ofstream &ofs, double Epsilon, i
     }
     for (int i = 0; i < size; i++) {
         if (data[i].pts >= minPts) {
-            data[i].type = Point::CORE;
+            data[i].type = Point<double>::CORE;
             corePoint.push_back(data[i]);
         }
     }
     for (int i = 0; i < corePoint.size(); i++) {
         for (int j = i + 1; j < corePoint.size(); j++) {
-            if (getDist(corePoint[i], corePoint[j]) < Epsilon) {
+            if (getDist(corePoint[i], corePoint[j], dist_type) < Epsilon) {
                 corePoint[i].corepts.push_back(j);
                 corePoint[j].corepts.push_back(i);
             }
         }
     }
     for (int i = 0; i < corePoint.size(); i++) {
-        stack <Point<double>> stack;
-        if (corePoint[i].visited == true)
+        stack<Point<double>> stack;
+        if (corePoint[i].visited)
             continue;
         stack.push(corePoint[i]);
         while (!stack.empty()) {
@@ -81,11 +96,11 @@ inline void DBSCAN(vector<Point<double>> &data, ofstream &ofs, double Epsilon, i
         }
     }
     for (int i = 0; i < size; i++) {
-        if (data[i].type == Point::CORE)
+        if (data[i].type == Point<double>::CORE)
             continue;
         for (int j = 0; j < corePoint.size(); j++) {
-            if (getDist(data[i], corePoint[j], dist_type) < Epsilon)) {
-                data[i].type = Point.BORDER;
+            if (getDist(data[i], corePoint[j], dist_type) < Epsilon) {
+                data[i].type = Point<double>::BORDER;
                 data[i].cluster = corePoint[j].cluster;
                 break;
             }
@@ -94,30 +109,24 @@ inline void DBSCAN(vector<Point<double>> &data, ofstream &ofs, double Epsilon, i
     print(data, corePoint, ofs);
 }
 
-void print(vector<Point<double>> &data, vector<Point<double>> &corePoint, ofstream &ofs) {
+inline void print(vector<Point<double>> &data, vector<Point<double>> &corePoint, ofstream &ofs) {
     const int size = data.size();
-    priority_queue <Point<double>, vector<Point<double>>, smallTopHeap> priorityQueue;
+    priority_queue<Point<double>, vector<Point<double>>, smallTopHeap> priorityQueue;
     for (int i = 0; i < size; i++) {
-        if (data[i].type == Point::BORDER) {
+        if (data[i].type == Point<double>::BORDER) {
             priorityQueue.push(data[i]);
         }
     }
     for (int i = 0; i < corePoint.size(); i++)
         priorityQueue.push(corePoint[i]);
     while (!priorityQueue.empty()) {
-        Point<double> cur = priorityQueue.front();
+        Point<double> cur = priorityQueue.top();
         priorityQueue.pop();
         ofs << "[" << cur.cluster << "] (";
         for (int i = 0; i < cur.size(); i++)
-            ofs << cur[i] << (i == cur.size() - 1) ? ", " : "";
+            ofs << cur[i] << ((i != cur.size() - 1) ? ", " : "");
         ofs << ")" << endl;
     }
 }
-
-struct smallTopHeap {
-    bool operator()(const Point &a, const Point &b) const {
-        return a > b; // 小顶堆
-    }
-};
 
 #endif //UCI_CPP_MLALGO_DBSCAN_H

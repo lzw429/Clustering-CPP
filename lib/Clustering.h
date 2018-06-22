@@ -13,7 +13,7 @@ double getDist(T &v1, T &v2, const string &dist_type);
 
 // 计算两元组间距离
 template<class T>
-inline double getDist(T &v1, T &v2, const string &dist_type) {
+double getDist(T &v1, T &v2, const string &dist_type) {
     double res = 0;
     if (v1.size() != v2.size())
         throw length_error("The length of the two tuples should be the same.");
