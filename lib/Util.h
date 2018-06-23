@@ -4,15 +4,19 @@
 
 #ifndef UCI_CPP_MLALGO_UTIL_H
 
-void setFileStream(ifstream ifs, ofstream ofs, string inFileName, string outFileName);
+#include <cassert>
+#include <sstream>
+
+ifstream openIfs(string &);
 
 void split(std::string &s, std::string delim, std::vector<std::string> &ret);
 
-vector<Tuple<double>> normalization(vector<Tuple<double>> &data);
+template<class T>
+vector<T> normalization(vector<T> &data);
 
 double stringToDouble(string &str);
 
-ifstream openIfs(string &inFileName) {
+inline ifstream openIfs(string &inFileName) {
     ifstream ifs(inFileName);
     if (!ifs) {
         throw ios_base::failure("[Error] cannot open the file " + inFileName + " .");
@@ -20,7 +24,7 @@ ifstream openIfs(string &inFileName) {
     return ifs;
 }
 
-void closeFileStream(ifstream &ifs, ofstream &ofs) {
+inline void closeFileStream(ifstream &ifs, ofstream &ofs) {
     ifs.close();
     ofs.close();
 }
@@ -28,7 +32,7 @@ void closeFileStream(ifstream &ifs, ofstream &ofs) {
 // s 被分割字符串
 // delimiters 分隔符
 // ret 分割后的字符串集合
-void split(std::string &s, std::string delim, std::vector<std::string> &ret) {
+inline void split(std::string &s, std::string delim, std::vector<std::string> &ret) {
     size_t last = 0;
     size_t index = s.find_first_of(delim, last);
     while (index != string::npos) {
@@ -41,14 +45,14 @@ void split(std::string &s, std::string delim, std::vector<std::string> &ret) {
     }
 }
 
-
-vector<Tuple<double>> normalization(vector<Tuple<double>> &data) { // 数据归一化
+template<class T>
+vector<T> normalization(vector<T> &data) { // 数据归一化
     assert(data.size() != 0);
     const int dimen = data[0].size(); // 维数
     const int size = data.size();
-    vector<Tuple<double>> norm(size, Tuple<double>(dimen));
-    Tuple<double> min_bound(dimen);
-    Tuple<double> max_bound(dimen);
+    vector<T> norm = data; // 注意深拷贝与浅拷贝
+    T min_bound(dimen);
+    T max_bound(dimen);
     for (auto &tuple : data) {
         for (int j = 0; j < dimen; j++) {
             min_bound[j] = min(min_bound[j], tuple[j]);
@@ -65,7 +69,7 @@ vector<Tuple<double>> normalization(vector<Tuple<double>> &data) { // 数据归�
     return norm;
 }
 
-double stringToDouble(string &str) {
+inline double stringToDouble(string &str) {
     double ret;
     stringstream ss;
     ss << str;

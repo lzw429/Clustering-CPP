@@ -3,10 +3,10 @@
 //
 #include <iostream>
 #include <fstream>
-#include "../lib/Util.h"
 #include "../lib/DBSCAN.h"
+#include "../lib/Util.h"
 
-#define Epsilon 0.1
+#define Epsilon 1
 using namespace std;
 
 int main() {
@@ -20,7 +20,7 @@ int main() {
     ifstream ifs = openIfs(inFileName);
     ofstream ofs(outFileName);
 
-    int choice = 0;
+    auto choice = 0;
     string dist_type;
     cout << "1. Manhattan distance" << endl;
     cout << "2. Euclidean distance" << endl;
@@ -51,14 +51,15 @@ int main() {
         line.clear();
         Point<double> point(nums.size() - 1);
         cnt++; // 元组计数
-        for (unsigned int i = 0; i < nums.size() - 1; i++) { // string 类型转化为 double 类型
+        for (int i = 0; i < nums.size() - 1; i++) { // string 类型转化为 double 类型
             point[i] = stringToDouble(nums[i]);
         }
         point.cluster = cnt;
         points.push_back(point);
     }
     points = normalization(points);  // 归一化
-    DBSCAN(points, ofs, Epsilon, minPts, dist_type); // 执行 KMeans 算法
+    DBSCAN(points, ofs, Epsilon, minPts, dist_type); // 执行 DBSCAN 算法
+
     closeFileStream(ifs, ofs);
     cout << "DBSCAN completed." << endl;
     return 0;

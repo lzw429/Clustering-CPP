@@ -26,11 +26,25 @@ public:
 
     Point(int size) {
         this->v.resize(size);
+        cluster = 0;
+        pts = 0;
+        visited = false;
     }
 
     Point(vector<double> v, int cluster) {
         this->v = v;
         this->cluster = cluster;
+        pts = 0;
+        visited = false;
+    }
+
+    Point(const Point &p) { // 拷贝构造函数
+        this->pts = p.pts;
+        this->visited = p.visited;
+        this->cluster = p.cluster;
+        this->corepts = p.corepts;
+        this->type = p.type;
+        this->v = p.v;
     }
 
     bool operator<(const Point &p) const {

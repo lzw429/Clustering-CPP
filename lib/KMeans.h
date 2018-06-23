@@ -9,12 +9,12 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
-#include <cassert>
 #include <ctime>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <cmath>
+#include <cassert>
 #include "Tuple.h"
 #include "Clustering.h"
 

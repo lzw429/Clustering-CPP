@@ -57,7 +57,7 @@ int main() {
         } else {
             tuple.type = 3;
         }
-        for (unsigned int i = 0; i < nums.size() - 1; i++) { // string 类型转化为 double 类型
+        for (int i = 0; i < nums.size() - 1; i++) { // string 类型转化为 double 类型
             tuple[i] = stringToDouble(nums[i]);
         }
         tuples.push_back(tuple);
