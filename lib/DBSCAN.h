@@ -38,7 +38,7 @@ public:
         visited = false;
     }
 
-    Point(const Point &p) { // 拷贝构造函数
+    Point(const Point &p) { // 复制构造函数
         this->pts = p.pts;
         this->visited = p.visited;
         this->cluster = p.cluster;
