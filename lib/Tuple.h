@@ -19,7 +19,7 @@ public:
     Tuple() : type(0) {
     }
 
-    Tuple(Tuple &tuple) { // 复制构造函数
+    Tuple(const Tuple &tuple) { // 复制构造函数
         this->type = tuple.type;
         this->v = tuple.v;
     }

@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <string>
+
 using namespace std;
 
 template<class T>
@@ -32,8 +33,7 @@ double getDist(T &v1, T &v2, const string &dist_type) {
             throw length_error("Calculating Chebyshev distance needs tuple dimension greater than or equal to 3.");
         for (int i = 0; i < v1.size(); i++) {
             const auto t = abs(v1[i] - v2[i]);
-            if (t > res)
-                res = t;
+            res = max(res, t);
         }
     }
     return res;

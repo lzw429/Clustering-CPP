@@ -7,6 +7,7 @@
 #include <cassert>
 #include <sstream>
 
+// 函数声明
 ifstream openIfs(string &);
 
 void split(std::string &s, std::string delim, std::vector<std::string> &ret);
@@ -16,6 +17,9 @@ vector<T> normalization(vector<T> &data);
 
 double stringToDouble(string &str);
 
+string getDistType();
+
+// 函数实现
 inline ifstream openIfs(string &inFileName) {
     ifstream ifs(inFileName);
     if (!ifs) {
@@ -75,6 +79,29 @@ inline double stringToDouble(string &str) {
     ss << str;
     ss >> ret;
     return ret;
+}
+
+string getDistType() {
+    auto choice = 0;
+    string dist_type;
+    cout << "1. Manhattan distance" << endl;
+    cout << "2. Euclidean distance" << endl;
+    cout << "3. Chebyshev distance" << endl;
+    cin >> choice;
+    switch (choice) {
+        case 1:
+            dist_type = "Manhattan";
+            break;
+        case 2:
+            dist_type = "Euclidean";
+            break;
+        case 3:
+            dist_type = "Chebyshev";
+            break;
+        default:
+            break;
+    }
+    return dist_type;
 }
 
 #define UCI_CPP_MLALGO_UTIL_H

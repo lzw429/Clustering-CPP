@@ -8,6 +8,7 @@
 using namespace std;
 
 int main() {
+    int choice = 0;
     string inFileName;
     string outFileName;
     cout << "Input file name:" << endl;
@@ -17,28 +18,11 @@ int main() {
 
     ifstream ifs = openIfs(inFileName);
     ofstream ofs(outFileName);
-
-    int choice = 0;
-    string dist_type;
+    
+    string dist_type = getDistType();
     vector<Tuple<double>> tuples;
     int k = 2;
-    cout << "1. Manhattan distance" << endl;
-    cout << "2. Euclidean distance" << endl;
-    cout << "3. Chebyshev distance" << endl;
-    cin >> choice;
-    switch (choice) {
-        case 1:
-            dist_type = "Manhattan";
-            break;
-        case 2:
-            dist_type = "Euclidean";
-            break;
-        case 3:
-            dist_type = "Chebyshev";
-            break;
-        default:
-            break;
-    }
+
     cout << "Enter the number of clusters:" << endl;
     cin >> k;
 

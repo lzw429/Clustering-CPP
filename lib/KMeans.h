@@ -1,8 +1,8 @@
 //
 // Created by 舒意恒 on 2018/5/29.
 //
-#ifndef UCI_CPP_MLALGO_KMEANS_H
-#define UCI_CPP_MLALGO_KMEANS_H
+#ifndef KMEANS_H
+#define KMEANS_H
 
 #define Epsilon 0.1
 
@@ -91,7 +91,7 @@ KMeans(vector<Tuple<double>> &tuples, vector<Tuple<double>> means, ofstream &ofs
     vector<vector<Tuple<double>>> clusters(k); // k个簇
     auto choice = 0; // 用户输入的选择
     // 根据初始质心给簇赋值
-    int label;
+    int label = 0;
     for (auto &tuple : tuples) {
         label = getClusterNum(means, tuple, dist_type);
         clusters[label].push_back(tuple);
@@ -147,4 +147,4 @@ inline vector<Tuple<double>> random_means(vector<Tuple<double>> &tuples, unsigne
     return means;
 }
 
-#endif //UCI_CPP_MLALGO_KMEANS_H
+#endif // KMEANS_H

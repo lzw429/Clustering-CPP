@@ -19,26 +19,9 @@ int main() {
     vector<Point<double>> points;
     ifstream ifs = openIfs(inFileName);
     ofstream ofs(outFileName);
+    
+    string dist_type = getDistType();
 
-    auto choice = 0;
-    string dist_type;
-    cout << "1. Manhattan distance" << endl;
-    cout << "2. Euclidean distance" << endl;
-    cout << "3. Chebyshev distance" << endl;
-    cin >> choice;
-    switch (choice) {
-        case 1:
-            dist_type = "Manhattan";
-            break;
-        case 2:
-            dist_type = "Euclidean";
-            break;
-        case 3:
-            dist_type = "Chebyshev";
-            break;
-        default:
-            break;
-    }
     auto minPts = 3;
     cout << "Enter the minPts:" << endl;
     cin >> minPts;

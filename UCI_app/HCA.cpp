@@ -4,9 +4,9 @@
 
 #include <iostream>
 #include <fstream>
-#include "../lib/HCA.h"
-#include "../lib/Util.h"
 #include "../lib/Tuple.h"
+#include "../lib/Util.h"
+#include "../lib/HCA.h"
 
 using namespace std;
 
@@ -21,6 +21,23 @@ int main() {
     ifstream ifs = openIfs(inFileName);
     ofstream ofs(outFileName);
 
+    string dist_type = getDistType();
+    string line;
+    auto cnt = 0;
+    while (ifs >> line) {
+        vector<string> nums;
+        split(line, ",", nums);
+        line.clear();
+        Tuple<double> tuple(nums.size() - 1);
+        cnt++; // 元组计数
+        for (int i = 0; i < nums.size() - 1; i++) { // string 类型转化为 double 类型
+            tuple[i] = stringToDouble(nums[i]);
+        }
+        tuples.push_back(tuple);
+    }
+    tuples = normalization(tuples);  // 归一化
 
+    HCA(tuples, dist_type, ofs);
+    closeFileStream(ifs, ofs);
     return 0;
 }
