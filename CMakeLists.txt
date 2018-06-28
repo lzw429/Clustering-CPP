@@ -5,3 +5,4 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_executable(KMeans_test UCI_app/KMeans_test.cpp)
 add_executable(DBSCAN_test UCI_app/DBSCAN_test.cpp)
+add_executable(HCA_test UCI_app/HCA.cpp)

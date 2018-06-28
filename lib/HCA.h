@@ -13,14 +13,14 @@
 #include "Clustering.h"
 
 struct Model {
-    int i;
-    int j;
+    int i = 0;
+    int j = 0;
     double dist = 0;
 };
 
-vector<vector<double>> &getDistMat(vector<Tuple> &data, string &dist_type) {
+vector<vector<double>> &getDistMat(vector<Tuple<double>> &data, vector<vector<double>> &distMat, string &dist_type) {
     const int size = data.size();
-    vector<vector<double>> distMat(size, vector<double>(size));
+
     for (int i = 0; i < size; i++) {
         for (int j = i + 1; j < size; j++) {
             distMat[i][j] = getDist(data[i], data[j], dist_type);
@@ -29,7 +29,8 @@ vector<vector<double>> &getDistMat(vector<Tuple> &data, string &dist_type) {
     return distMat;
 }
 
-Model &findClosestClusters(vector<vector<double>> &distMat) {
+template<class T>
+Model &findClosestClusters(vector<T> &distMat) {
     Model model;
     double minDist = INT_MAX;
     for (int i = 0; i < distMat.size(); i++) {
@@ -45,11 +46,13 @@ Model &findClosestClusters(vector<vector<double>> &distMat) {
     return model;
 }
 
-void HCA(vector<Tuple> &data, string &dist_type, ofstream &ofs) {
-    vector<vector<double>> distMat = getDistMat(data, dist_type);
+void HCA(vector<Tuple<double>> &data, string &dist_type, ofstream &ofs) {
     const int size = data.size();
     Model minModel;
+    vector<vector<double>> distMat(size, vector<double>(size));
     auto cnt = 0;
+
+    getDistMat(data, distMat, dist_type);
     while (true) {
         cnt++;
         ofs << "No." << cnt << " iteration" << endl;
@@ -57,7 +60,7 @@ void HCA(vector<Tuple> &data, string &dist_type, ofstream &ofs) {
             for (int j = 0; j < size; j++) {
                 ofs << distMat[i][j] << " ";
             }
-            cout << endl;
+            ofs << endl;
         }
         minModel = findClosestClusters(data);
         if (minModel.dist == 0) // 找不到距离最近的两个簇时，迭代结束
