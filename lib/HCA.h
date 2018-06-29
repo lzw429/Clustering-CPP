@@ -5,22 +5,21 @@
 #ifndef UCI_CPP_MLALGO_HCA_H
 #define UCI_CPP_MLALGO_HCA_H
 
-#include <climits>
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include "Tuple.h"
 #include "Clustering.h"
 
+#define INF 0x3f3f3f3f
 struct Model {
-    int i = 0;
-    int j = 0;
-    double dist = 0;
+    int i = INF;
+    int j = INF;
+    double dist = INF;
 };
 
 vector<vector<double>> &getDistMat(vector<Tuple<double>> &data, vector<vector<double>> &distMat, string &dist_type) {
-    const int size = data.size();
-
+    const auto size = data.size();
     for (int i = 0; i < size; i++) {
         for (int j = i + 1; j < size; j++) {
             distMat[i][j] = getDist(data[i], data[j], dist_type);
@@ -30,11 +29,11 @@ vector<vector<double>> &getDistMat(vector<Tuple<double>> &data, vector<vector<do
 }
 
 template<class T>
-Model &findClosestClusters(vector<T> &distMat) {
-    Model model;
-    double minDist = INT_MAX;
-    for (int i = 0; i < distMat.size(); i++) {
-        for (int j = i + 1; j < distMat.size(); j++) {
+void findClosestClusters(vector<T> &distMat, Model &model) {
+    const auto size = distMat.size();
+    double minDist = INF;
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
             if (distMat[i][j] < minDist && distMat[i][j] != 0) {
                 minDist = distMat[i][j];
                 model.i = i;
@@ -43,26 +42,24 @@ Model &findClosestClusters(vector<T> &distMat) {
             }
         }
     }
-    return model;
 }
 
 void HCA(vector<Tuple<double>> &data, string &dist_type, ofstream &ofs) {
-    const int size = data.size();
+    const auto size = data.size();
     Model minModel;
     vector<vector<double>> distMat(size, vector<double>(size));
     auto cnt = 0;
 
     getDistMat(data, distMat, dist_type);
     while (true) {
-        cnt++;
-        ofs << "No." << cnt << " iteration" << endl;
+        ofs << "No." << (++cnt) << " iteration" << endl;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 ofs << distMat[i][j] << " ";
             }
             ofs << endl;
         }
-        minModel = findClosestClusters(data);
+        findClosestClusters(distMat, minModel);
         if (minModel.dist == 0) // 找不到距离最近的两个簇时，迭代结束
             break;
         ofs << "Combine cluster " << (minModel.i + 1) << " and " << (minModel.j + 1) << endl;

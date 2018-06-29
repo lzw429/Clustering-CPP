@@ -39,5 +39,6 @@ int main() {
 
     HCA(tuples, dist_type, ofs);
     closeFileStream(ifs, ofs);
+    cout << "Hierarchical clustering algorithm completed." << endl;
     return 0;
 }
