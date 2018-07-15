@@ -53,14 +53,14 @@ void HCA(vector<Tuple<double>> &data, string &dist_type, ofstream &ofs) {
     getDistMat(data, distMat, dist_type);
     while (true) {
         ofs << "No." << (++cnt) << " iteration" << endl;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                ofs << distMat[i][j] << " ";
-            }
-            ofs << endl;
-        }
+//        for (int i = 0; i < size; i++) {
+//            for (int j = 0; j < size; j++) {
+//                ofs << distMat[i][j] << " ";
+//            }
+//            ofs << endl;
+//        }
         findClosestClusters(distMat, minModel);
-        if (minModel.dist == 0) // 找不到距离最近的两个簇时，迭代结束
+        if (minModel.dist == 0 || cnt == size - 1) // 找不到距离最近的两个簇时，迭代结束
             break;
         ofs << "Combine cluster " << (minModel.i + 1) << " and " << (minModel.j + 1) << endl;
         ofs << "The distance is " << minModel.dist << endl;

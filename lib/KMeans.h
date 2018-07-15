@@ -48,7 +48,7 @@ inline int getClusterNum(vector<Tuple<double>> &means, Tuple<double> &tuple, con
 
 // 获取当前簇的质心
 inline Tuple<double> getMeans(vector<Tuple<double>> &cluster) {
-    const int m = cluster.size(); // 样本数
+    const int m = static_cast<const int>(cluster.size()); // 样本数
     if (!m)
         throw length_error("There is no sample for calculation.");
     const int n = cluster[0].size(); // 维数

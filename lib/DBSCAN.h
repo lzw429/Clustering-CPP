@@ -23,12 +23,14 @@ public:
     bool visited;
     vector<int> corepts;
     int cluster;
+    int label;
 
     Point(int size) {
         this->v.resize(size);
         cluster = 0;
         pts = 0;
         visited = false;
+        label = 0;
     }
 
     Point(vector<double> v, int cluster) {
@@ -36,6 +38,7 @@ public:
         this->cluster = cluster;
         pts = 0;
         visited = false;
+        label = 0;
     }
 
     Point(const Point &p) { // 复制构造函数
@@ -45,12 +48,11 @@ public:
         this->corepts = p.corepts;
         this->type = p.type;
         this->v = p.v;
+        this->label = p.label;
     }
 
     bool operator<(const Point &p) const {
-        if (this->cluster < p.cluster)
-            return true;
-        return false;
+        return this->cluster < p.cluster;
     }
 };
 
@@ -102,10 +104,11 @@ inline void DBSCAN(vector<Point<double>> &data, ofstream &ofs, double Epsilon, i
             stack.pop();
             cur.visited = true;
             for (int j = 0; j < cur.corepts.size(); j++) {
-                if (corePoint[cur.corepts[j]].visited = true)
+                if (corePoint[cur.corepts[j]].visited)
                     continue;
                 corePoint[cur.corepts[j]].cluster = corePoint[i].cluster;
                 stack.push(corePoint[cur.corepts[j]]);
+                corePoint[cur.corepts[j]].visited = true;
             }
         }
     }
@@ -136,7 +139,7 @@ inline void print(vector<Point<double>> &data, vector<Point<double>> &corePoint,
     while (!priorityQueue.empty()) {
         Point<double> cur = priorityQueue.top();
         priorityQueue.pop();
-        ofs << "[" << cur.cluster << "] (";
+        ofs << "[" << cur.cluster << "] label: " << cur.label << " (";
         for (int i = 0; i < cur.size(); i++)
             ofs << cur[i] << ((i != cur.size() - 1) ? ", " : "");
         ofs << ")" << endl;

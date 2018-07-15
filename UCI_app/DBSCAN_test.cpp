@@ -6,7 +6,6 @@
 #include "../lib/DBSCAN.h"
 #include "../lib/Util.h"
 
-#define Epsilon 1
 using namespace std;
 
 int main() {
@@ -19,12 +18,13 @@ int main() {
     vector<Point<double>> points;
     ifstream ifs = openIfs(inFileName);
     ofstream ofs(outFileName);
-    
+
     string dist_type = getDistType();
 
     auto minPts = 3;
-    cout << "Enter the minPts:" << endl;
-    cin >> minPts;
+    auto Epsilon = 0.14;
+    cout << "Enter the minPts and the Epsilon:" << endl;
+    cin >> minPts >> Epsilon;
 
     string line;
     auto cnt = 0;
@@ -37,6 +37,7 @@ int main() {
         for (int i = 0; i < nums.size() - 1; i++) { // string 类型转化为 double 类型
             point[i] = stringToDouble(nums[i]);
         }
+        point.label = stoi(nums[nums.size() - 1]);
         point.cluster = cnt;
         points.push_back(point);
     }

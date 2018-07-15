@@ -40,5 +40,4 @@ public:
     }
 };
 
-
 #endif //UCI_CPP_MLALGO_TUPLE_H
